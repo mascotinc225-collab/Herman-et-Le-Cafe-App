@@ -21,6 +21,9 @@ async function startServer() {
   app.use(express.json());
   const PORT = Number(process.env.PORT) || 3000;
 
+  // Serve Material folder as static assets
+  app.use("/Material", express.static(path.join(process.cwd(), "public/Material")));
+
   // --- MOCK DATABASE ---
   let customers: Customer[] = [
     {
@@ -362,6 +365,8 @@ async function startServer() {
   } else {
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
+    // Explicitly serve Material if needed, though express.static(distPath) covers it
+    app.use("/Material", express.static(path.join(distPath, "Material")));
     app.get("*", (req, res) => {
       res.sendFile(path.join(distPath, "index.html"));
     });
