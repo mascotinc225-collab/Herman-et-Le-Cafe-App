@@ -21,9 +21,6 @@ async function startServer() {
   app.use(express.json());
   const PORT = Number(process.env.PORT) || 3000;
 
-  // Serve Material folder as static assets
-  app.use("/Material", express.static(path.join(process.cwd(), "Material")));
-
   // --- MOCK DATABASE ---
   let customers: Customer[] = [
     {
