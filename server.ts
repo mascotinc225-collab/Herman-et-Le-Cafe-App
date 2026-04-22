@@ -21,6 +21,9 @@ async function startServer() {
   app.use(express.json());
   const PORT = Number(process.env.PORT) || 3000;
 
+  // Serve Material folder from public for dev compatibility
+  app.use("/Material", express.static(path.join(process.cwd(), "public", "Material")));
+
   // --- MOCK DATABASE ---
   let customers: Customer[] = [
     {

@@ -232,7 +232,8 @@ export default function App() {
           joinDate: "2024-01-15",
           lastVisit: new Date().toISOString(),
           referralCode: "MONTY-BREW",
-          referralCount: 0
+          referralCount: 0,
+          segment: "Active"
         },
         {
           id: "HC002",
@@ -244,11 +245,46 @@ export default function App() {
           joinDate: "2023-11-20",
           lastVisit: new Date().toISOString(),
           referralCode: "LINDA-BREW",
-          referralCount: 2
+          referralCount: 2,
+          segment: "Champion"
         }
       ];
+
+      const mockStats: DashboardStats = {
+        revenueOverTime: [
+          { date: "Mon", amount: 45000 },
+          { date: "Tue", amount: 52000 },
+          { date: "Wed", amount: 48000 },
+          { date: "Thu", amount: 61000 },
+          { date: "Fri", amount: 75000 }
+        ],
+        customerGrowth: [
+          { date: "Week 1", new: 45, returning: 120 },
+          { date: "Week 2", new: 52, returning: 145 }
+        ],
+        topCustomers: mockCustomers.map(c => ({ name: c.name, spend: c.points * 100 })),
+        popularDrinks: [
+          { name: "Espresso", count: 145 },
+          { name: "Latte", count: 230 }
+        ],
+        rewardsIssued: [
+          { date: "Mon", count: 2 },
+          { id: "Tue", count: 5 } as any
+        ],
+        segmentData: [
+          { name: "Active", value: 45 },
+          { name: "Champion", value: 12 }
+        ]
+      };
+
+      const mockActivities = [
+        { id: 1, type: 'join', customer: 'Monty Carlo', time: 'Just now', detail: 'Joined Signature Club' }
+      ];
+
       setCustomers(mockCustomers);
       setActiveCustomer(mockCustomers[0]);
+      setStats(mockStats);
+      setActivities(mockActivities);
     } finally {
       setIsLoading(false);
       try {
