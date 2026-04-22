@@ -134,8 +134,7 @@ export default function App() {
     fetchData();
     
     // Socket.io for Real-time Updates
-    // Using protocol-agnostic and ensuring it's targeting the correct host
-    const socket = io(); // Defaults to same host
+    const socket = io(window.location.origin);
     
     socket.on("connect", () => setIsLiveConnected(true));
     socket.on("disconnect", () => setIsLiveConnected(false));
@@ -210,23 +209,66 @@ export default function App() {
         fetch('/api/customers'),
         fetch('/api/stats')
       ]);
+      
+      if (!custRes.ok || !statsRes.ok) throw new Error('Server unreachable');
+      
       const custData = await custRes.json();
       const statsData = await statsRes.json();
       
       setCustomers(custData);
       setStats(statsData);
       setActiveCustomer(custData[0]); 
-
-      const insights = await getSalesPredictions([]);
-      setAiInsight(insights);
     } catch (err) {
-      console.error(err);
+      console.warn("Using local fallback data (Netlify/Static Mode)");
+      // Fallback for Netlify/Static hosting
+      const mockCustomers: Customer[] = [
+        {
+          id: "HC001",
+          name: "Monty Carlo",
+          phone: "+225 07070707",
+          points: 120,
+          stamps: 6,
+          tier: "Bronze",
+          joinDate: "2024-01-15",
+          lastVisit: new Date().toISOString(),
+          referralCode: "MONTY-BREW",
+          referralCount: 0
+        },
+        {
+          id: "HC002",
+          name: "Linda Espresso",
+          phone: "+225 01010101",
+          points: 450,
+          stamps: 8,
+          tier: "Silver",
+          joinDate: "2023-11-20",
+          lastVisit: new Date().toISOString(),
+          referralCode: "LINDA-BREW",
+          referralCount: 2
+        }
+      ];
+      setCustomers(mockCustomers);
+      setActiveCustomer(mockCustomers[0]);
     } finally {
       setIsLoading(false);
+      try {
+        const insights = await getSalesPredictions([]);
+        setAiInsight(insights);
+      } catch (e) {}
     }
   }
 
   async function handleAddVisit(customerId: string, drink?: { name: string; price: number }) {
+    // Optimistic Update for "Friendly" static mode
+    setCustomers(prev => prev.map(c => {
+      if (c.id === customerId) {
+        const updated = { ...c, points: c.points + Math.floor((drink?.price || 2500) / 100), stamps: (c.stamps + 1) % 10 };
+        if (activeCustomer?.id === customerId) setActiveCustomer(updated);
+        return updated;
+      }
+      return c;
+    }));
+
     try {
       const res = await fetch(`/api/customers/${customerId}/visit`, {
         method: 'POST',
@@ -237,11 +279,13 @@ export default function App() {
           staff: 'Herman'
         })
       });
-      const data = await res.json();
-      setActiveCustomer(data.customer);
-      setCustomers(prev => prev.map(c => c.id === data.customer.id ? data.customer : c));
+      if (res.ok) {
+        const data = await res.json();
+        setActiveCustomer(data.customer);
+        setCustomers(prev => prev.map(c => c.id === data.customer.id ? data.customer : c));
+      }
     } catch (err) {
-      console.error(err);
+      console.warn("Backend unavailable, using local optimistic state.");
     }
   }
 
@@ -259,6 +303,21 @@ export default function App() {
     e.preventDefault();
     if (!validateForm()) return;
     
+    // Optimistic Update for Static Mode
+    const tempId = `HC-TEMP-${Date.now()}`;
+    const newCustomer: Customer = {
+      ...newCustomerForm,
+      id: tempId,
+      points: 0,
+      stamps: 0,
+      tier: 'Bronze',
+      referralCode: `REF-${tempId.slice(-4)}`,
+      referralCount: 0
+    };
+    
+    setCustomers(prev => [...prev, newCustomer]);
+    setShowAddCustomer(false);
+
     try {
       const res = await fetch('/api/customers', {
         method: 'POST',
@@ -267,18 +326,20 @@ export default function App() {
       });
       if (res.ok) {
         const data = await res.json();
-        setCustomers(prev => [...prev, data]);
-        setShowAddCustomer(false);
-        setNewCustomerForm({ 
-          name: '', 
-          phone: '', 
-          email: '',
-          joinDate: new Date().toISOString().split('T')[0],
-          lastVisit: new Date().toISOString().split('T')[0]
-        });
+        // Replace temp customer with real data from server
+        setCustomers(prev => prev.map(c => c.id === tempId ? data : c));
+        if (activeCustomer?.id === tempId) setActiveCustomer(data);
       }
     } catch (err) {
-      console.error(err);
+      console.warn("Backend unavailable, keeping local registration.");
+    } finally {
+      setNewCustomerForm({ 
+        name: '', 
+        phone: '', 
+        email: '',
+        joinDate: new Date().toISOString().split('T')[0],
+        lastVisit: new Date().toISOString().split('T')[0]
+      });
     }
   }
 

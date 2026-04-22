@@ -38,7 +38,7 @@ export const menuData: MenuCategory[] = [
     title: "Milk-Based Coffees",
     description: "Smooth, creamy blends pairing our signature espresso with velvety milk.",
     items: [
-      { id: "m1", name: "Espresso Macchiato", description: "Espresso topped with a small amount of steamed milk foam", price: 1000, image: "/Material/espresso macchiato.jpg" },
+      { id: "m1", name: "Espresso Macchiato", description: "Espresso topped with a small amount of steamed milk foam", price: 1000, image: "/Material/espresso machiato.jpg" },
       { id: "m2", name: "2 × Espresso Macchiato", description: "Double espresso with light milk foam", price: 1800, image: "/Material/double espresso macchiato.webp" },
       { id: "m3", name: "Caffè Latte", description: "Espresso with steamed milk and a light layer of foam, smooth and creamy", price: 1500, image: "/Material/flat white.webp" },
       { id: "m4", name: "2 × Caffè Latte", description: "Double latte for a richer, milkier experience", price: 2600, image: "/Material/double flat white.webp" },
