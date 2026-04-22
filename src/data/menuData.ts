@@ -20,7 +20,7 @@ export const menuData: MenuCategory[] = [
     description: "Classic brewing excellence with bold, concentrated flavors.",
     items: [
       { id: "h1", name: "Ristretto", description: "Short, concentrated shot of espresso with bold aroma and intense flavor", price: 800, image: "/Material/ristretto.webp", isSignature: true },
-      { id: "h2", name: "2 × Ristretto", description: "Double ristretto shots for a stronger, richer taste", price: 1400, image: "/Material/double_espresso_v2.jpg" },
+      { id: "h2", name: "2 × Ristretto", description: "Double ristretto shots for a stronger, richer taste", price: 1400, image: "/Material/double_ristretto.jpg" },
       { id: "h3", name: "Espresso", description: "Classic Italian coffee shot made from finely ground beans and hot water", price: 800, image: "/Material/espresso.webp", isBestseller: true },
       { id: "h4", name: "2 × Espresso", description: "Two shots of espresso for extra energy and depth", price: 1400, image: "/Material/double_espresso_v2.jpg" },
       { id: "h5", name: "Coffee (Classic)", description: "Smooth brewed coffee made from quality roasted beans", price: 1000, image: "/Material/coffee.webp" },
@@ -40,13 +40,13 @@ export const menuData: MenuCategory[] = [
     items: [
       { id: "m1", name: "Espresso Macchiato", description: "Espresso topped with a small amount of steamed milk foam", price: 1000, image: "/Material/espresso_machiato.jpg" },
       { id: "m2", name: "2 × Espresso Macchiato", description: "Double espresso with light milk foam", price: 1800, image: "/Material/double_espresso_macchiato.webp" },
-      { id: "m3", name: "Caffè Latte", description: "Espresso with steamed milk and a light layer of foam, smooth and creamy", price: 1500, image: "/Material/flat white.webp" },
+      { id: "m3", name: "Caffè Latte", description: "Espresso with steamed milk and a light layer of foam, smooth and creamy", price: 1500, image: "/Material/flat_white.webp" },
       { id: "m4", name: "2 × Caffè Latte", description: "Double latte for a richer, milkier experience", price: 2600, image: "/Material/double_flat_white.webp" },
       { id: "m5", name: "Cappuccino", description: "Equal parts espresso, steamed milk, and foam, balanced and frothy", price: 1500, image: "/Material/cappuccino.webp", isBestseller: true },
       { id: "m6", name: "2 × Cappuccino", description: "Double cappuccino with extra richness", price: 2600, image: "/Material/double_cappuccino_v2.jpg" },
-      { id: "m7", name: "Flat White", description: "Espresso with velvety microfoam milk, smooth and strong", price: 1700, image: "/Material/flat white.webp", isSignature: true },
+      { id: "m7", name: "Flat White", description: "Espresso with velvety microfoam milk, smooth and strong", price: 1700, image: "/Material/flat_white.webp", isSignature: true },
       { id: "m8", name: "2 × Flat White", description: "Double flat white for a creamy yet bold taste", price: 3000, image: "/Material/double_flat_white.webp" },
-      { id: "m9", name: "Latte Macchiato", description: "Steamed milk “stained” with a shot of espresso, layered and smooth", price: 1700, image: "/Material/flat white.webp" },
+      { id: "m9", name: "Latte Macchiato", description: "Steamed milk “stained” with a shot of espresso, layered and smooth", price: 1700, image: "/Material/flat_white.webp" },
       { id: "m10", name: "2 × Latte Macchiato", description: "Double layered milk coffee with extra espresso", price: 3000, image: "/Material/double_flat_white.webp" },
     ]
   },
@@ -78,6 +78,7 @@ export const menuData: MenuCategory[] = [
     ]
   }
 ];
+
 
 export const offers = [
   { id: "o1", title: "Duo Deal", description: "Any 2 coffees", discount: "-200 FCFA" },

@@ -21,8 +21,18 @@ async function startServer() {
   app.use(express.json());
   const PORT = Number(process.env.PORT) || 3000;
 
-  // Serve Material folder from public for dev compatibility
-  app.use("/Material", express.static(path.join(process.cwd(), "public", "Material")));
+  // Robust static asset serving for both Dev and Production
+  const isProd = process.env.NODE_ENV === "production";
+  const staticMaterialPath = isProd 
+    ? path.join(__dirname, "Material") // In production, server.cjs is in dist/, assets are in dist/Material
+    : path.join(process.cwd(), "public", "Material");
+
+  app.use("/Material", express.static(staticMaterialPath));
+  
+  // Also serve root public files in production
+  if (isProd) {
+    app.use(express.static(__dirname));
+  }
 
   // --- MOCK DATABASE ---
   let customers: Customer[] = [

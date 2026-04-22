@@ -86,7 +86,7 @@ export function Menu({ onQuickAdd, activeCustomer }: MenuProps) {
       {/* Header */}
       <div className="relative h-48 md:h-72 w-full rounded-2xl md:rounded-[32px] overflow-hidden border border-gold/20 shadow-2xl group transition-all bg-matte-black mt-4 md:mb-12">
         <img 
-          src="/ice drinks.jpg" 
+          src="/ice_drinks.jpg" 
           alt="Herman & Le Café Menu" 
           className="w-full h-full object-cover brightness-[0.3] group-hover:scale-105 transition-transform duration-[3000ms]" 
           referrerPolicy="no-referrer" 
