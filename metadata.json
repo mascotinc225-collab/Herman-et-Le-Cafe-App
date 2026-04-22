@@ -1,0 +1,8 @@
+{
+  "name": "Herman et Le Cafe App",
+  "description": "Premium mobile-optimized customer loyalty program and digital menu for Herman & Le Café, Côte d'Ivoire. Features signature digital membership cards, interactive menus, automated rewards, and AI-driven growth analytics.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": []
+}
