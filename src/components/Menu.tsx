@@ -184,6 +184,10 @@ export function Menu({ onQuickAdd, activeCustomer }: MenuProps) {
                         whileHover={{ scale: 1.1 }}
                         transition={{ duration: 0.6 }}
                         referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&q=80"; // Fallback to a nice generic coffee image
+                        }}
                       />
                       {item.isSignature && (
                         <div className="absolute top-1 right-1 md:top-2 md:right-2 bg-matte-black/70 backdrop-blur-md p-1 md:p-2 rounded-full border border-gold/40 shadow-xl">
