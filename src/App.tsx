@@ -106,6 +106,52 @@ export default function App() {
     lastVisit: new Date().toISOString().split('T')[0]
   });
 
+  const [menuUploadForm, setMenuUploadForm] = useState({
+    name: '',
+    price: '',
+    description: '',
+    image: null as File | null
+  });
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleMenuUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!menuUploadForm.image || !menuUploadForm.name || !menuUploadForm.price) return;
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', menuUploadForm.image);
+
+      const uploadRes = await fetch('/api/menu/upload', {
+        method: 'POST',
+        body: formData
+      });
+      const uploadData = await uploadRes.json();
+
+      if (uploadData.url) {
+        // In a real app, you'd save this to the DB. For now, we'll just log and maybe show it?
+        // Actually, let's just show a success notification
+        const newNotif = {
+           id: Date.now().toString(),
+           title: "Menu Item Ready",
+           message: `${menuUploadForm.name} with custom image has been prepared for the menu.`,
+           time: "Just now",
+           type: "System",
+           read: false
+        };
+        setNotifications(prev => [newNotif, ...prev]);
+        setMenuUploadForm({ name: '', price: '', description: '', image: null });
+        alert("Image uploaded successfully! Path: " + uploadData.url);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Upload failed. Check server logs.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const tierThemes = {
     Bronze: {
       accent: 'text-gold',
@@ -882,6 +928,74 @@ export default function App() {
               exit={{ opacity: 0, y: -20 }}
               className="p-4 md:p-10 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 auto-rows-min"
             >
+              {/* Menu Upload Tile */}
+              <div className="md:col-span-3 p-6 bg-surface border border-white/5 rounded-2xl md:rounded-[32px] overflow-hidden relative">
+                <div className="absolute top-0 right-0 p-8 opacity-5">
+                  <Coffee className="w-48 h-48" />
+                </div>
+                <div className="relative z-10 max-w-2xl">
+                  <h3 className="font-serif text-2xl text-white mb-2">Update Signature Menu</h3>
+                  <p className="text-xs text-text-secondary uppercase tracking-[2px] mb-6">Upload item photography to synchronize with digital menu</p>
+                  
+                  <form onSubmit={handleMenuUpload} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input 
+                      type="text" 
+                      placeholder="Item Name"
+                      value={menuUploadForm.name}
+                      onChange={e => setMenuUploadForm(prev => ({ ...prev, name: e.target.value }))}
+                      className="bg-matte-black border border-[#222] rounded-xl p-3 text-xs outline-none focus:border-gold transition-all"
+                    />
+                    <input 
+                      type="number" 
+                      placeholder="Price (FCFA)"
+                      value={menuUploadForm.price}
+                      onChange={e => setMenuUploadForm(prev => ({ ...prev, price: e.target.value }))}
+                      className="bg-matte-black border border-[#222] rounded-xl p-3 text-xs outline-none focus:border-gold transition-all"
+                    />
+                    <div className="md:col-span-2">
+                      <div className="flex flex-col md:flex-row items-center gap-4">
+                        <label className="flex-1 w-full relative cursor-pointer group">
+                          <div className="bg-matte-black border border-[#222] border-dashed rounded-xl p-4 flex flex-col items-center justify-center gap-2 group-hover:border-gold transition-all min-h-[100px]">
+                            {menuUploadForm.image ? (
+                              <div className="flex flex-col items-center gap-1">
+                                <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+                                <span className="text-[10px] text-text-secondary truncate max-w-[200px]">{menuUploadForm.image.name}</span>
+                              </div>
+                            ) : (
+                              <>
+                                <Plus className="w-6 h-6 text-gold opacity-50" />
+                                <span className="text-[10px] uppercase tracking-widest text-text-secondary">Attach Photograph</span>
+                              </>
+                            )}
+                          </div>
+                          <input 
+                            type="file" 
+                            className="hidden" 
+                            accept="image/*"
+                            onChange={e => {
+                              const file = e.target.files?.[0];
+                              if (file) setMenuUploadForm(prev => ({ ...prev, image: file }));
+                            }}
+                          />
+                        </label>
+                        <button 
+                          type="submit"
+                          disabled={isUploading || !menuUploadForm.image}
+                          className={cn(
+                            "w-full md:w-auto px-8 py-4 rounded-xl font-bold uppercase tracking-widest text-[11px] transition-all h-fit",
+                            (isUploading || !menuUploadForm.image)
+                              ? "bg-white/5 text-white/20 cursor-not-allowed"
+                              : "bg-white text-matte-black hover:bg-gold shadow-xl"
+                          )}
+                        >
+                          {isUploading ? "Uploading..." : "Save to Menu"}
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
               <BentoTile label="AI Customer Segmentation" className="md:col-span-3">
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-6">
                   {stats?.segmentData.map((seg) => (

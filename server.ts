@@ -3,6 +3,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import multer from "multer";
+import fs from "fs";
 import { Customer, Transaction, Offer, CustomerSegment } from "./src/types.ts";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -33,6 +35,38 @@ async function startServer() {
   if (isProd) {
     app.use(express.static(__dirname));
   }
+
+  // --- FILE UPLOAD CONFIG ---
+  // Ensure directory exists
+  if (!fs.existsSync(staticMaterialPath)) {
+    fs.mkdirSync(staticMaterialPath, { recursive: true });
+  }
+
+  const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, staticMaterialPath);
+    },
+    filename: (req, file, cb) => {
+      // Clean filename
+      const safeName = file.originalname.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_.]/g, '');
+      cb(null, `${Date.now()}_${safeName}`);
+    }
+  });
+
+  const upload = multer({ 
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+  });
+
+  app.post("/api/menu/upload", upload.single("image"), (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+    
+    // Return relative path for client use
+    const relativePath = `/Material/${req.file.filename}`;
+    res.json({ url: relativePath });
+  });
 
   // --- MOCK DATABASE ---
   let customers: Customer[] = [
